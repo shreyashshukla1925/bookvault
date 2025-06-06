@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookVault - Secure Book Sharing Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #4834d4, #686de0);
+            color: white;
+            box-shadow: 0 4px 15px rgba(72, 52, 212, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #00d2d3, #54a0ff);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 210, 211, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-info {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .default-cover {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .book-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .book-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .book-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .reader-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .reader-content {
+            line-height: 1.8;
+            font-size: 1.1em;
+            text-align: justify;
+        }
+
+        .reader-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .file-drop-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .file-drop-zone:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #764ba2;
+        }
+
+        .file-drop-zone.dragover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #764ba2;
+        }
+
+        .analytics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .analytics-table th, .analytics-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .analytics-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .analytics-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .book-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reader-controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 BookVault</h1>
+            <div class="nav-buttons">
+                <button class="btn btn-primary" onclick="showSection('login')">Login</button>
+                <button class="btn btn-secondary" onclick="showSection('register')">Register</button>
+                <button class="btn btn-success" onclick="showSection('admin')">Admin Panel</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Login Section -->
+            <div id="login" class="section active">
+                <h2>📖 Login to Your Library</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+
+            <!-- Register Section -->
+            <div id="register" class="section">
+                <h2>📝 Create Your Account</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regUsername">Username</label>
+                        <input type="text" id="regUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email (Optional)</label>
+                        <input type="email" id="regEmail">
+                    </div>
+                    <button type="submit" class="btn btn-success">Create Account</button>
+                </form>
+            </div>
+
+            <!-- User Dashboard -->
+            <div id="dashboard" class="section">
+                <div class="user-info">
+                    <h2>Welcome back, <span id="currentUser"></span>! 👋</h2>
+                    <p>Continue your reading journey</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="booksRead">0</div>
+                        <div class="stat-label">Books Read</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="readingTime">0h</div>
+                        <div class="stat-label">Reading Time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="currentlyReading">0</div>
+                        <div class="stat-label">Currently Reading</div>
+                    </div>
+                </div>
+
+                <h3>📚 Available Books</h3>
+                <div class="book-grid" id="userBooks"></div>
+            </div>
+
+            <!-- Book Reader -->
+            <div id="reader" class="section">
+                <div class="reader-controls">
+                    <button class="btn btn-secondary" onclick="showSection('dashboard')">← Back to Library</button>
+                    <div>
+                        <span>Progress: <span id="readingProgress">0%</span></span>
+                        <button class="btn btn-primary" onclick="markAsRead()">Mark as Read</button>
+                    </div>
+                </div>
+                <div class="reader-panel">
+                    <h2 id="readerTitle">Book Title</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar"></div>
+                    </div>
+                    <div class="reader-content" id="readerContent">
+                        Select a book to start reading...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="admin" class="section">
+                <h2>🔧 Admin Dashboard</h2>
+                <div id="adminLogin">
+                    <form id="adminLoginForm">
+                        <div class="form-group">
+                            <label for="adminPassword">Admin Password</label>
+                            <input type="password" id="adminPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Access Admin Panel</button>
+                    </form>
+                </div>
+
+                <div id="adminPanel" class="hidden">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalUsers">0</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalBooks">0</div>
+                            <div class="stat-label">Total Books</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalReads">0</div>
+                            <div class="stat-label">Total Reads</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="activeUsers">0</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                    </div>
+
+                    <h3>📤 Upload New Book</h3>
+                    <form id="uploadForm">
+                        <div class="form-group">
+                            <label for="bookTitle">Book Title</label>
+                            <input type="text" id="bookTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookAuthor">Author</label>
+                            <input type="text" id="bookAuthor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookCategory">Category</label>
+                            <select id="bookCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="fiction">Fiction</option>
+                                <option value="non-fiction">Non-Fiction</option>
+                                <option value="mystery">Mystery</option>
+                                <option value="romance">Romance</option>
+                                <option value="sci-fi">Science Fiction</option>
+                                <option value="biography">Biography</option>
+                                <option value="education">Education</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookDescription">Description</label>
+                            <textarea id="bookDescription" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Book Cover Image</label>
+                            <div class="file-drop-zone" id="coverDropZone">
+                                <p>🖼️ Drop book cover image here or click to select</p>
+                                <p><small>Supported formats: JPG, PNG, WEBP</small></p>
+                                <input type="file" id="bookCover" accept=".jpg,.jpeg,.png,.webp" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Book File</label>
+                            <div class="file-drop-zone" id="fileDropZone">
+                                <p>📁 Drop your book file here or click to select</p>
+                                <p><small>Supported formats: PDF, EPUB, TXT</small></p>
+                                <input type="file" id="bookFile" accept=".pdf,.epub,.txt" style="display: none;">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Upload Book</button>
+                    </form>
+
+                    <h3>📊 Book Analytics</h3>
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Book Title</th>
+                                <th>Author</th>
+                                <th>Total Readers</th>
+                                <th>Completion Rate</th>
+                                <th>Avg. Reading Time</th>
+                                <th>Upload Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="analyticsTable">
+                        </tbody>
+                    </table>
+
+                    <h3>👥 User Activity</h3>
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Books Read</th>
+                                <th>Total Reading Time</th>
+                                <th>Last Active</th>
+                                <th>Join Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userActivityTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentUser = null;
+        let isAdmin = false;
+        let currentBook = null;
+        let readingProgress = {};
+        let readingStartTime = null;
+
+        // Mock Database (In production, this would be a real database)
+        let users = JSON.parse(localStorage.getItem('bookapp_users') || '[]');
+        let books = JSON.parse(localStorage.getItem('bookapp_books') || '[]');
+        let readings = JSON.parse(localStorage.getItem('bookapp_readings') || '[]');
+        let userSessions = JSON.parse(localStorage.getItem('bookapp_sessions') || '{}');
+
+        // Admin credentials (change this in production!)
+        const ADMIN_PASSWORD = 'bca@1925#';
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+        });
+
+        function initializeApp() {
+            // Add sample books if none exist
+            if (books.length === 0) {
+                books = [
+                    {
+                        id: 1,
+                        title: "The Digital Revolution",
+                        author: "Tech Author",
+                        category: "non-fiction",
+                        description: "A comprehensive guide to understanding digital transformation",
+                        content: "Chapter 1: Introduction to Digital Age\n\nThe digital revolution has transformed every aspect of our lives. From the way we communicate to how we work, shop, and entertain ourselves, technology has become an integral part of our daily existence.\n\nThis transformation didn't happen overnight. It's been a gradual process spanning decades, with each innovation building upon the last. The internet, mobile devices, social media, and artificial intelligence have all played crucial roles in shaping our digital world.\n\nIn this book, we'll explore how these technologies emerged, their impact on society, and what the future might hold. We'll examine both the benefits and challenges of our increasingly connected world.\n\nChapter 2: The Internet Era\n\nThe internet began as a research project in the 1960s, but it wasn't until the 1990s that it became accessible to the general public. The World Wide Web, created by Tim Berners-Lee, made information sharing easier than ever before.\n\nE-commerce emerged as businesses realized the potential of online sales. Companies like Amazon and eBay pioneered new ways of buying and selling goods. This shift fundamentally changed retail and created new economic opportunities.\n\nChapter 3: Mobile Computing\n\nThe introduction of smartphones revolutionized personal computing. Suddenly, people had access to the internet, email, and applications wherever they went. This mobility changed how we interact with information and each other.\n\nMobile apps created new industries and transformed existing ones. From ride-sharing to food delivery, mobile technology enabled services that were previously impossible or impractical.\n\nChapter 4: Social Media Impact\n\nSocial media platforms connected people across the globe, creating virtual communities and new forms of communication. These platforms became powerful tools for sharing information, organizing events, and building businesses.\n\nHowever, social media also brought challenges, including privacy concerns, misinformation, and the impact on mental health. Understanding these trade-offs is crucial for navigating our digital future.\n\nChapter 5: Artificial Intelligence\n\nAI represents the latest frontier in the digital revolution. Machine learning algorithms can now perform tasks that were once thought to require human intelligence, from recognizing images to understanding natural language.\n\nAs AI continues to advance, it will likely transform industries from healthcare to transportation. The key is ensuring that these technologies are developed and deployed responsibly.\n\nConclusion\n\nThe digital revolution is far from over. As we look to the future, new technologies like quantum computing, virtual reality, and advanced AI will continue to reshape our world. By understanding these changes, we can better prepare for and shape the digital future we want to create.",
+                        uploadDate: new Date().toISOString(),
+                        fileType: "txt"
+                    },
+                    {
+                        id: 2,
+                        title: "Cooking Mastery",
+                        author: "Chef Master",
+                        category: "education",
+                        description: "Learn professional cooking techniques from basics to advanced",
+                        content: "Introduction to Culinary Arts\n\nCooking is both an art and a science. It requires creativity, precision, and understanding of how ingredients interact with each other. Whether you're a beginner or looking to improve your skills, this guide will help you master the fundamentals of cooking.\n\nChapter 1: Kitchen Essentials\n\nBefore you start cooking, you need the right tools. A well-equipped kitchen doesn't require expensive gadgets, but certain items are essential for success.\n\nKnives: A good chef's knife is your most important tool. It should feel comfortable in your hand and hold a sharp edge. Learn proper knife skills for safety and efficiency.\n\nCookware: Invest in quality pots and pans. Stainless steel and cast iron are excellent choices that will last for years with proper care.\n\nBasic Tools: A cutting board, measuring cups, mixing bowls, and wooden spoons are fundamental tools every cook needs.\n\nChapter 2: Understanding Ingredients\n\nFresh, quality ingredients are the foundation of great cooking. Learn to select the best produce, understand seasonal availability, and store ingredients properly.\n\nProteins: Understanding different cuts of meat, fish preparation, and cooking temperatures ensures food safety and optimal flavor.\n\nVegetables: Each vegetable has its own characteristics. Some are best eaten raw, others need cooking to unlock their flavors and nutrients.\n\nSpices and Herbs: These are the secret to transforming simple ingredients into extraordinary dishes. Learn which flavors complement each other.\n\nChapter 3: Fundamental Techniques\n\nMastering basic cooking techniques is essential. These methods form the foundation for countless recipes.\n\nSautéing: Quick cooking over high heat that preserves texture and flavor. Perfect for vegetables and tender cuts of meat.\n\nBraising: Slow cooking in liquid that tenderizes tough cuts and develops rich flavors.\n\nRoasting: Dry heat cooking that creates caramelization and concentrates flavors.\n\nSteaming: Gentle cooking that preserves nutrients and natural flavors.\n\nChapter 4: Flavor Development\n\nBuilding layers of flavor is what separates good cooking from great cooking. This involves understanding how different cooking methods affect taste.\n\nThe Maillard reaction creates complex flavors through browning. Deglazing captures these flavors and creates rich sauces.\n\nSeasoning throughout the cooking process, not just at the end, ensures flavors penetrate the food.\n\nChapter 5: Practice and Experimentation\n\nCooking is a skill that improves with practice. Start with simple recipes and gradually tackle more complex dishes. Don't be afraid to experiment and make mistakes – they're part of the learning process.\n\nTaste your food throughout cooking and adjust seasoning as needed. Develop your palate by trying new cuisines and ingredients.\n\nConclusion\n\nCooking is a lifelong journey of discovery. With patience, practice, and passion, you can create delicious meals that bring joy to yourself and others. Remember, the best cooks never stop learning and experimenting.",
+                        uploadDate: new Date().toISOString(),
+                        fileType: "txt"
+                    }
+                ];
+                saveData();
+            }
+        }
+
+        function setupEventListeners() {
+            // Form submissions
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('adminLoginForm').addEventListener('submit', handleAdminLogin);
+            document.getElementById('uploadForm').addEventListener('submit', handleBookUpload);
+
+            // File upload for book files
+            const fileDropZone = document.getElementById('fileDropZone');
+            const fileInput = document.getElementById('bookFile');
+            
+            fileDropZone.addEventListener('click', () => fileInput.click());
+            fileDropZone.addEventListener('dragover', handleDragOver);
+            fileDropZone.addEventListener('drop', handleFileDrop);
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // File upload for book covers
+            const coverDropZone = document.getElementById('coverDropZone');
+            const coverInput = document.getElementById('bookCover');
+            
+            coverDropZone.addEventListener('click', () => coverInput.click());
+            coverDropZone.addEventListener('dragover', handleCoverDragOver);
+            coverDropZone.addEventListener('drop', handleCoverDrop);
+            coverInput.addEventListener('change', handleCoverSelect);
+        }
+
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionName).classList.add('active');
+
+            if (sectionName === 'dashboard' && currentUser) {
+                loadUserDashboard();
+            } else if (sectionName === 'admin' && !isAdmin) {
+                document.getElementById('adminLogin').style.display = 'block';
+                document.getElementById('adminPanel').classList.add('hidden');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                user.lastActive = new Date().toISOString();
+                showAlert('Login successful!', 'success');
+                showSection('dashboard');
+                saveData();
+            } else {
+                showAlert('Invalid username or password', 'error');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const email = document.getElementById('regEmail').value;
+
+            if (users.find(u => u.username === username)) {
+                showAlert('Username already exists', 'error');
+                return;
+            }
+
+            const newUser = {
+                id: users.length + 1,
+                username,
+                password,
+                email,
+                joinDate: new Date().toISOString(),
+                lastActive: new Date().toISOString(),
+                booksRead: [],
+                readingTime: 0
+            };
+
+            users.push(newUser);
+            saveData();
+            showAlert('Account created successfully! Please login.', 'success');
+            showSection('login');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+
+            if (password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                document.getElementById('adminLogin').style.display = 'none';
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadAdminDashboard();
+                showAlert('Admin access granted', 'success');
+            } else {
+                showAlert('Invalid admin password', 'error');
+            }
+        }
+
+        function handleBookUpload(e) {
+            e.preventDefault();
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const category = document.getElementById('bookCategory').value;
+            const description = document.getElementById('bookDescription').value;
+            const fileInput = document.getElementById('bookFile');
+            const coverInput = document.getElementById('bookCover');
+
+            if (!fileInput.files[0]) {
+                showAlert('Please select a book file', 'error');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const coverFile = coverInput.files[0];
+            
+            const fileReader = new FileReader();
+            
+            fileReader.onload = function(e) {
+                const newBook = {
+                    id: books.length + 1,
+                    title,
+                    author,
+                    category,
+                    description,
+                    content: e.target.result,
+                    uploadDate: new Date().toISOString(),
+                    fileType: file.type.includes('pdf') ? 'pdf' : file.type.includes('epub') ? 'epub' : 'txt',
+                    fileName: file.name,
+                    coverImage: null
+                };
+
+                // Handle cover image if provided
+                if (coverFile) {
+                    const coverReader = new FileReader();
+                    coverReader.onload = function(coverEvent) {
+                        newBook.coverImage = coverEvent.target.result;
+                        books.push(newBook);
+                        saveData();
+                        showAlert('Book uploaded successfully with cover image!', 'success');
+                        document.getElementById('uploadForm').reset();
+                        resetDropZones();
+                        loadAdminDashboard();
+                    };
+                    coverReader.readAsDataURL(coverFile);
+                } else {
+                    books.push(newBook);
+                    saveData();
+                    showAlert('Book uploaded successfully!', 'success');
+                    document.getElementById('uploadForm').reset();
+                    resetDropZones();
+                    loadAdminDashboard();
+                }
+            };
+
+            fileReader.readAsText(file);
+        }
+
+        function loadUserDashboard() {
+            document.getElementById('currentUser').textContent = currentUser.username;
+            
+            // Update user stats
+            const userReadings = readings.filter(r => r.userId === currentUser.id);
+            document.getElementById('booksRead').textContent = userReadings.filter(r => r.completed).length;
+            document.getElementById('readingTime').textContent = Math.round(currentUser.readingTime / 60) + 'h';
+            document.getElementById('currentlyReading').textContent = userReadings.filter(r => !r.completed).length;
+
+            // Load available books
+            const booksContainer = document.getElementById('userBooks');
+            booksContainer.innerHTML = '';
+
+            books.forEach(book => {
+                const userReading = userReadings.find(r => r.bookId === book.id);
+                const progress = userReading ? userReading.progress : 0;
+                const isCompleted = userReading ? userReading.completed : false;
+
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    ${book.coverImage ? 
+                        `<img src="${book.coverImage}" alt="${book.title}" class="book-cover">` : 
+                        `<div class="default-cover">📚</div>`
+                    }
+                    <div class="book-title">${book.title}</div>
+                    <div class="book-meta">by ${book.author} • ${book.category}</div>
+                    <div class="book-meta">${book.description}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="book-stats">
+                        <span>Progress: ${progress}%</span>
+                        <span>${isCompleted ? '✅ Completed' : '📖 Reading'}</span>
+                    </div>
+                    <button class="btn ${isCompleted ? 'btn-success' : 'btn-primary'}" onclick="openBook(${book.id})">
+                        ${isCompleted ? 'Read Again' : progress > 0 ? 'Continue Reading' : 'Start Reading'}
+                    </button>
+                `;
+                booksContainer.appendChild(bookCard);
+            });
+        }
+
+        function loadAdminDashboard() {
+            // Update admin stats
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalBooks').textContent = books.length;
+            document.getElementById('totalReads').textContent = readings.filter(r => r.completed).length;
+            
+            // Active users (active in last 7 days)
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const activeUsers = users.filter(u => new Date(u.lastActive) > sevenDaysAgo).length;
+            document.getElementById('activeUsers').textContent = activeUsers;
+
+            // Load book analytics
+            const analyticsTable = document.getElementById('analyticsTable');
+            analyticsTable.innerHTML = '';
+
+            books.forEach(book => {
+                const bookReadings = readings.filter(r => r.bookId === book.id);
+                const totalReaders = bookReadings.length;
+                const completedReaders = bookReadings.filter(r => r.completed).length;
+                const completionRate = totalReaders > 0 ? Math.round((completedReaders / totalReaders) * 100) : 0;
+                const avgTime = totalReaders > 0 ? Math.round(bookReadings.reduce((sum, r) => sum + (r.timeSpent || 0), 0) / totalReaders / 60) : 0;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>${totalReaders}</td>
+                    <td>${completionRate}%</td>
+                    <td>${avgTime}h</td>
+                    <td>${new Date(book.uploadDate).toLocaleDateString()}</td>
+                `;
+                analyticsTable.appendChild(row);
+            });
+
+            // Load user activity
+            const userActivityTable = document.getElementById('userActivityTable');
+            userActivityTable.innerHTML = '';
+
+            users.forEach(user => {
+                const userReadings = readings.filter(r => r.userId === user.id);
+                const booksRead = userReadings.filter(r => r.completed).length;
+                const totalTime = Math.round((user.readingTime || 0) / 60);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${booksRead}</td>
+                    <td>${totalTime}h</td>
+                    <td>${new Date(user.lastActive).toLocaleDateString()}</td>
+                    <td>${new Date(user.joinDate).toLocaleDateString()}</td>
+                `;
+                userActivityTable.appendChild(row);
+            });
+        }
+
+        function openBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+
+            currentBook = book;
+            readingStartTime = new Date();
+
+            // Find or create reading record
+            let reading = readings.find(r => r.userId === currentUser.id && r.bookId === bookId);
+            if (!reading) {
+                reading = {
+                    id: readings.length + 1,
+                    userId: currentUser.id,
+                    bookId: bookId,
+                    progress: 0,
+                    completed: false,
+                    startDate: new Date().toISOString(),
+                    timeSpent: 0
+                };
+                readings.push(reading);
+            }
+
+            // Update UI
+            document.getElementById('readerTitle').textContent = book.title;
+            document.getElementById('readerContent').textContent = book.content;
+            document.getElementById('readingProgress').textContent = reading.progress + '%';
+            document.getElementById('progressBar').style.width = reading.progress + '%';
+
+            showSection('reader');
+            saveData();
+
+            // Simulate reading progress
+            simulateReading();
+        }
+
+        function simulateReading() {
+            if (!currentBook || !currentUser) return;
+
+            const reading = readings.find(r => r.userId === currentUser.id && r.bookId === currentBook.id);
+            if (!reading || reading.completed) return;
+
+            // Increase progress every 3 seconds (simulating reading)
+            const progressInterval = setInterval(() => {
+                if (!currentBook || document.getElementById('reader').classList.contains('active') === false) {
+                    clearInterval(progressInterval);
+                    updateReadingTime();
+                    return;
+                }
+
+                reading.progress = Math.min(reading.progress + 2, 100);
+                document.getElementById('readingProgress').textContent = reading.progress + '%';
+                document.getElementById('progressBar').style.width = reading.progress + '%';
+
+                if (reading.progress >= 100) {
+                    reading.completed = true;
+                    reading.completedDate = new Date().toISOString();
+                    showAlert('Congratulations! You completed the book!', 'success');
+                    clearInterval(progressInterval);
+                }
+
+                updateReadingTime();
+                saveData();
+            }, 3000);
+        }
+
+        function updateReadingTime() {
+            if (!readingStartTime || !currentUser) return;
+
+            const timeSpent = (new Date() - readingStartTime) / 1000; // seconds
+            currentUser.readingTime = (currentUser.readingTime || 0) + timeSpent;
+
+            const reading = readings.find(r => r.userId === currentUser.id && r.bookId === currentBook.id);
+            if (reading) {
+                reading.timeSpent = (reading.timeSpent || 0) + timeSpent;
+            }
+
+            readingStartTime = new Date();
+        }
+
+        function markAsRead() {
+            if (!currentBook || !currentUser) return;
+
+            const reading = readings.find(r => r.userId === currentUser.id && r.bookId === currentBook.id);
+            if (reading) {
+                reading.progress = 100;
+                reading.completed = true;
+                reading.completedDate = new Date().toISOString();
+                
+                document.getElementById('readingProgress').textContent = '100%';
+                document.getElementById('progressBar').style.width = '100%';
+                
+                showAlert('Book marked as completed!', 'success');
+                saveData();
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.target.classList.add('dragover');
+        }
+
+        function handleCoverDragOver(e) {
+            e.preventDefault();
+            e.target.classList.add('dragover');
+        }
+
+        function handleCoverDrop(e) {
+            e.preventDefault();
+            e.target.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('bookCover').files = files;
+                handleCoverSelect({ target: { files: files } });
+            }
+        }
+
+        function handleCoverSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const dropZone = document.getElementById('coverDropZone');
+                dropZone.innerHTML = `<p>🖼️ Selected: ${file.name}</p><p><small>Click to change image</small></p>`;
+            }
+        }
+
+        function resetDropZones() {
+            const fileDropZone = document.getElementById('fileDropZone');
+            const coverDropZone = document.getElementById('coverDropZone');
+            
+            fileDropZone.innerHTML = `<p>📁 Drop your book file here or click to select</p><p><small>Supported formats: PDF, EPUB, TXT</small></p>`;
+            coverDropZone.innerHTML = `<p>🖼️ Drop book cover image here or click to select</p><p><small>Supported formats: JPG, PNG, WEBP</small></p>`;
+        }
+
+        function handleFileDrop(e) {
+            e.preventDefault();
+            e.target.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('bookFile').files = files;
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const dropZone = document.getElementById('fileDropZone');
+                dropZone.innerHTML = `<p>📄 Selected: ${file.name}</p><p><small>Click to change file</small></p>`;
+            }
+        }
+
+        function showAlert(message, type) {
+            // Remove existing alerts
+            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+
+            const mainContent = document.querySelector('.main-content');
+            mainContent.insertBefore(alert, mainContent.firstChild);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        function saveData() {
+            localStorage.setItem('bookapp_users', JSON.stringify(users));
+            localStorage.setItem('bookapp_books', JSON.stringify(books));
+            localStorage.setItem('bookapp_readings', JSON.stringify(readings));
+        }
+
+        // Auto-save reading progress when user leaves the page
+        window.addEventListener('beforeunload', function() {
+            if (currentUser && readingStartTime) {
+                updateReadingTime();
+                saveData();
+            }
+        });
+
+        // Security: Clear sensitive data periodically (simulate session management)
+        setInterval(() => {
+            // In a real app, you'd validate session tokens here
+            if (currentUser) {
+                currentUser.lastActive = new Date().toISOString();
+                saveData();
+            }
+        }, 300000); // Update every 5 minutes
+    </script>
+</body>
+</html>
